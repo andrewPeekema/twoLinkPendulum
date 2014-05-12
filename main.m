@@ -48,6 +48,7 @@ z.f2 = k.f2h1.invAdj*(z.h1+[zeros(5,1); dq2]);
 z.g2 = k.g2f2.invAdj*z.f2;
 
 %% Generate the dynamics
+% Find the Lagrangian
 syms m1 I1 m2 I2 real
 % Mass matrix of the first link
 mm1 = m1*eye(3,3);
@@ -63,8 +64,56 @@ Im2 = [0 0 0;
       0 0 I2];
 M2 = [[mm2 zeros(3,3)];
       [zeros(3,3) Im2]];
-% Kinetic Energy of the system
+% Kinetic energy of the system
 T = 1/2*z.g1'*M1*z.g1 + 1/2*z.g2'*M2*z.g2;
+% Potential energy of the system
+syms m g
+V = g*(m1*k.g1f0.y + m2*k.g2f0.y);
+% The Lagrangian
+L = T - V;
+
+% The Euler-Lagrange equation
+% d/dt*pL/pdq - pL/pq = Q
+% The first term
+eq1 = diff(L,dq1); % Differentiate
+% Add t
+from = {'q1' 'q2' 'dq1' 'dq2'};
+to   = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
+eq1 = subs(eq1,from,to);
+eq1 = diff(eq1,t); % Differentiate
+% Remove t
+from = {'diff(q1(t), t)' 'diff(q2(t), t)' 'diff(dq1(t), t)' 'diff(dq2(t), t)'};
+to   = {'dq1' 'dq2' 'ddq1' 'ddq2'};
+eq1 = subs(eq1,from,to);
+from = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
+to   = {'q1' 'q2' 'dq1' 'dq2'};
+eq1 = subs(eq1,from,to);
+% Subtract the second term
+eq1 = eq1 - diff(L,q1);
+eq1 = simplify(eq1,'IgnoreAnalyticConstraints',true);
+
+% The second term
+eq2 = diff(L,dq2);
+from = {'q1' 'q2' 'dq1' 'dq2'};
+to   = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
+eq2 = subs(eq2,from,to);
+eq2 = diff(eq2,t);
+% Remove t
+from = {'diff(q1(t), t)' 'diff(q2(t), t)' 'diff(dq1(t), t)' 'diff(dq2(t), t)'};
+to   = {'dq1' 'dq2' 'ddq1' 'ddq2'};
+eq2 = subs(eq2,from,to);
+from = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
+to   = {'q1' 'q2' 'dq1' 'dq2'};
+eq2 = subs(eq2,from,to);
+% Subtract the second term
+eq2 = eq2 - diff(L,q2);
+eq2 = simplify(eq2,'IgnoreAnalyticConstraints',true);
+
+% Solve for acceleration
+syms ddq1 ddq2 real
+sol = solve(eq1,eq2,ddq1,ddq2);
+ddq1 = simplify(sol.ddq1);
+ddq2 = simplify(sol.ddq2);
 
 %{
 % Initial state conditions
