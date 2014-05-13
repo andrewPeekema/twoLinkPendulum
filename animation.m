@@ -10,17 +10,17 @@ function animation(c,k,sol,exportVideo)
 
 % Unpack constants
 l1 = c.l1;
-m1 = c.m1;
 l2 = c.l2;
-m2 = c.m2;
 
 % Create visualization objects
-link1 = CubeClass([l1 sqrt(m1/l1)*0.5 sqrt(m1/l1)*0.5]);
-link2 = CubeClass([l2 sqrt(m2/l2)*0.5 sqrt(m2/l2)*0.5]);
+link1 = CubeClass([l1 0.1 0.1]);
+link2 = CubeClass([l2 0.1 0.1]);
 
 % Create link transformations
-g1f0 = matlabFunction(subs(k.g1f0.g));
-g2f0 = matlabFunction(subs(k.g2f0.g));
+from = {'l1' 'l2'};
+to   = {l1 l2};
+g1f0 = matlabFunction(subs(k.g1f0.g,from,to));
+g2f0 = matlabFunction(subs(k.g2f0.g,from,to));
 
 % Create a figure handle
 h.figure = figure;
