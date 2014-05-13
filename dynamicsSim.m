@@ -1,6 +1,7 @@
-function sol = dynamicsSim(X0,ddq1,ddq2)
+function sol = dynamicsSim(t,X0,ddq1,ddq2)
 % Simulates the time response of a two link pendulum
 % Given
+%   t: Time vector to integrate over
 %   X0: Initial state [q1 dq1 q2 dq2]
 %   ddq1: Angular acceleration for q1
 %   ddq2: Angular acceleration for q2
@@ -15,7 +16,7 @@ options = odeset(...
     'AbsTol', 1e-9);
 
 % Simulate the dynamics over a time interval
-[sol.t sol.X] = ode45(@dynamics,[0:0.01:10], X0, options);
+[sol.t sol.X] = ode45(@dynamics,t, X0, options);
 
 function dX = dynamics(t,X)
     % t == time
