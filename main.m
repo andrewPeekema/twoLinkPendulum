@@ -73,45 +73,11 @@ V = g*(m1*k.g1f0.y + m2*k.g2f0.y);
 L = T - V;
 
 % The Euler-Lagrange equation
-% d/dt*pL/pdq - pL/pq = Q
-% The first term
-eq1 = diff(L,dq1); % Differentiate
-% Add t
-from = {'q1' 'q2' 'dq1' 'dq2'};
-to   = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
-eq1 = subs(eq1,from,to);
-eq1 = diff(eq1,t); % Differentiate
-% Remove t
-from = {'diff(q1(t), t)' 'diff(q2(t), t)' 'diff(dq1(t), t)' 'diff(dq2(t), t)'};
-to   = {'dq1' 'dq2' 'ddq1' 'ddq2'};
-eq1 = subs(eq1,from,to);
-from = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
-to   = {'q1' 'q2' 'dq1' 'dq2'};
-eq1 = subs(eq1,from,to);
-% Subtract the second term
-eq1 = eq1 - diff(L,q1);
-eq1 = simplify(eq1,'IgnoreAnalyticConstraints',true);
-
-% The second term
-eq2 = diff(L,dq2);
-from = {'q1' 'q2' 'dq1' 'dq2'};
-to   = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
-eq2 = subs(eq2,from,to);
-eq2 = diff(eq2,t);
-% Remove t
-from = {'diff(q1(t), t)' 'diff(q2(t), t)' 'diff(dq1(t), t)' 'diff(dq2(t), t)'};
-to   = {'dq1' 'dq2' 'ddq1' 'ddq2'};
-eq2 = subs(eq2,from,to);
-from = {'q1(t)' 'q2(t)' 'dq1(t)' 'dq2(t)'};
-to   = {'q1' 'q2' 'dq1' 'dq2'};
-eq2 = subs(eq2,from,to);
-% Subtract the second term
-eq2 = eq2 - diff(L,q2);
-eq2 = simplify(eq2,'IgnoreAnalyticConstraints',true);
+eqs = eulerLagrange(L,{'q1' 'q2'});
 
 % Solve for acceleration
 syms ddq1 ddq2 real
-sol = solve(eq1,eq2,ddq1,ddq2);
+sol = solve(eqs(1),eqs(2),ddq1,ddq2);
 ddq1 = simplify(sol.ddq1);
 ddq2 = simplify(sol.ddq2);
 
