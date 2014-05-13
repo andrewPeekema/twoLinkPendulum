@@ -37,6 +37,11 @@ L = T - V;
 % The Euler-Lagrange equation
 eqs = eulerLagrange(L,{'q1' 'q2'});
 
+% Add damping
+syms dq1 dq2 c1 c2 real
+eqs(1) = eqs(1) + dq1*c1;
+eqs(2) = eqs(2) + dq2*c2;
+
 % Solve for acceleration
 syms ddq1 ddq2 real
 sol = solve(eqs(1),eqs(2),ddq1,ddq2);
