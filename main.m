@@ -20,24 +20,6 @@ k.f2f0.g = simplify(k.f2f0.g,'IgnoreAnalyticConstraints',true); % Clean up notat
 k.g2f2 = SE3([l2/2 0 0]);
 k.g2f0 = k.f2f0*k.g2f2; % Center of the second link
 
-% Convert to time varying variables
-%{
-syms q1(t) q2(t) real
-mySub = SE3Subs({'q1' 'q2'},{'q1(t)' 'q2(t)'});
-kTemp = mySub.structSubs(k);
-
-% Differentiate
-myDiff = SE3Diff('t');
-dk = myDiff.structDiff(kTemp);
-
-% Simplify
-syms dq1 dq2 real
-mySub = SE3Subs({'diff(q1(t), t)' 'diff(q2(t), t)'},{'dq1' 'dq2'});
-dk = mySub.structSubs(dk);
-mySub = SE3Subs({'q1(t)' 'q2(t)'},{'q1' 'q2'});
-dk = mySub.structSubs(dk);
-%}
-
 %% Generate the velocity kinematics
 syms dq1 dq2 real
 z.f0 = zeros(6,1);
