@@ -26,6 +26,7 @@ q = {'q1' 'dq1' 'q2' 'dq2'};
 Lfy = lieDerivative(y,f,q);
 Lfy2 = lieDerivative(Lfy,f,q);
 
+% TODO: Fix this matrix
 g = [0 0;
      1 0;
      0 0;
