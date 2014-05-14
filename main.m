@@ -6,7 +6,6 @@ clc       % Clear the command prompt
 clear all % Remove all workspace variables
 close all % Close all figure windows
 
-
 display('Solving the dynamics...')
 % Solve the kinematics
 k = kinematicEqns;
@@ -15,6 +14,25 @@ z = velocityEqns(k);
 % Solve the dynamics
 eqs = dynamicEqns(k,z);
 
+% Control the system using feedback linearization
+syms q1 q2 dq1 dq2 q1des q2des real
+f = [dq1;
+     eqs.ddq1;
+     dq2;
+     eqs.ddq2];
+y = [q1 - q1des;
+     q2 - q2des];
+q = {'q1' 'dq1' 'q2' 'dq2'};
+Lfy = lieDerivative(y,f,q);
+Lfy2 = lieDerivative(Lfy,f,q);
+
+g = [0 0;
+     1 0;
+     0 0;
+     0 1];
+LgLfy = lieDerivative(Lfy,g,q);
+
+%{
 % Declare constants
 g = 9.81; % m/s^2
 % Link 1
@@ -33,6 +51,7 @@ ddq1 = matlabFunction(subs(eqs.ddq1));
 ddq2 = matlabFunction(subs(eqs.ddq2));
 
 display('...dynamics solved')
+
 
 
 display('Simulating the dynamics...')
@@ -61,3 +80,4 @@ exportVideo = false;
 c.l1 = l1;
 c.l2 = l2;
 animation(c,k,sol,exportVideo);
+%}
