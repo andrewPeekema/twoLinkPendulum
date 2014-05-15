@@ -35,14 +35,13 @@ g = [0     0;
 LgLfy = lieDerivative(Lfy,g,q);
 
 % Gain matricies
-k1 = [1 0;
-      0 1];
-k2 = [1;
-      1];
+k1 = [2 0;
+      0 2];
+k2 = [4 0;
+      0 4];
 
 % The control
-% TODO: Troubleshoot this control
-u = -inv(LgLfy)*(Lfy2+k1*Lfy+k2);
+u = -LgLfy\(Lfy2+k1*Lfy+k2*y);
 
 % Put the control into the dynamic equations
 eqs.ddq1 = eqs.ddq1 + g(2,1)*u(1);
@@ -77,9 +76,9 @@ display('...dynamics solved')
 
 display('Simulating the dynamics...')
 % Initial state conditions
-X0 = [pi/4 ...    % Angle (rad)
+X0 = [0 ...    % Angle (rad)
       0 ...    % Angular velocity (rad/s)
-      pi/4-0.01 ...    % Angle (rad)
+      0 ...    % Angle (rad)
       0];      % Angular velocity (rad/s)
 % Time vector (s)
 t = [0:0.01:20];
