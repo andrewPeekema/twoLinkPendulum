@@ -28,7 +28,7 @@ M2 = [[mm2 zeros(3,3)];
 T = 1/2*z.g1'*M1*z.g1 + 1/2*z.g2'*M2*z.g2;
 
 % Potential energy of the system
-syms m g
+syms g real
 V = g*(m1*k.g1f0.y + m2*k.g2f0.y);
 
 % The Lagrangian
